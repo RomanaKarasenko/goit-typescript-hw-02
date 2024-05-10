@@ -1,9 +1,19 @@
 import Modal from "react-modal";
 import css from "./ImageModal.module.css";
 
+interface Props {
+  closeModal: () => void;
+  modalIsOpen: boolean;
+  imageSrc?: string;
+  imageAltDescription?: string;
+  imageDescription?: string;
+  imageAutor?: string;
+  imageLikes?: string | number;
+}
+
 Modal.setAppElement("#root");
 
-const ImageModal = ({
+const ImageModal: React.FC<Props> = ({
   closeModal,
   modalIsOpen,
   imageSrc = "https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg",
@@ -19,7 +29,6 @@ const ImageModal = ({
       className={css.Modal}
       overlayClassName={css.OverlayModal}
     >
-      {" "}
       <div>
         <div>
           <img

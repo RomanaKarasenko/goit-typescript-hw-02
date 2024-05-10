@@ -2,24 +2,34 @@ import { useEffect, useState } from "react";
 import { fetchImages } from "./API/keys-api.js";
 import toast, { Toaster } from "react-hot-toast";
 import "./App.css";
-import ErrorMessage from "./components/errorMessage/ErrorMessage.jsx";
+import ErrorMessage from "./components/errorMessage/ErrorMessage.js";
 import ImageGallery from "./components/imageGallery/ImageGallery.jsx";
 import ImageModal from "./components/imageModal/ImageModal.jsx";
 import LoaderComponent from "./components/loaderComponent/LoaderComponent.jsx";
 import LoadMoreBtn from "./components/loadMoreBtn/LoadMoreBtn.jsx";
 import SearchBar from "./components/searchBar/SearchBar.jsx";
 
-function App() {
-  const [query, setQuery] = useState("");
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [page, setPage] = useState(1);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [loadMoreBtn, setLoadMoreBtn] = useState(false);
+interface ModalData {
+  imageSrc: string;
+  imageAltDescription: string;
+  imageDescription: string;
+  imageAuthor: string;
+  imageLikes: number;
+}
+interface Props {
+  message: string;
+}
 
-  const [modalData, setModalData] = useState({
+function App() {
+  const [query, setQuery] = useState<string>("");
+  const [images, setImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [loadMoreBtn, setLoadMoreBtn] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<ModalData>({
     imageSrc: "",
     imageAltDescription: "",
     imageDescription: "",
@@ -52,12 +62,18 @@ function App() {
             });
           }
         }
-      } catch (error) {
-        setErrorMsg(
-          !error.response.data.errors
-            ? error.message
-            : error.response.data.errors
-        );
+      } catch (error: any) {
+        let errorMessage = error.message;
+
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors
+        ) {
+          errorMessage = error.response.data.errors;
+        }
+
+        setErrorMsg(errorMessage);
         setError(true);
       } finally {
         setLoading(false);
@@ -66,13 +82,14 @@ function App() {
     fetchPhotos();
   }, [query, page]);
 
-  const handleSearch = (searchQuery) => {
+  const handleSearch = (searchQuery: string) => {
     if (searchQuery !== query) {
       setQuery(searchQuery);
       setPage(1);
       setImages([]);
     }
   };
+
   const openModal = () => {
     setModalIsOpen(true);
   };
@@ -80,11 +97,12 @@ function App() {
   const closeModal = () => {
     setModalIsOpen(false);
   };
+
   const handleSearchNextPage = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const handleImageClick = (imageData) => {
+  const handleImageClick = (imageData: ModalData) => {
     setModalData(imageData);
     openModal();
   };
@@ -93,11 +111,11 @@ function App() {
     <div className="App">
       <SearchBar onSearch={handleSearch} />
       <Toaster />
-      {error && <ErrorMessage>{errorMsg}</ErrorMessage>}
+      {error && <ErrorMessage message={errorMsg} />}
       {images.length > 0 && (
         <ImageGallery images={images} onImageClick={handleImageClick} />
       )}
-      {loading && <LoaderComponent />}
+      {loading && <LoaderComponent loading={loading} />}
       {loadMoreBtn && <LoadMoreBtn onLoadMore={handleSearchNextPage} />}
       <ImageModal
         closeModal={closeModal}

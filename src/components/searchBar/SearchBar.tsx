@@ -2,13 +2,18 @@ import { BsSearchHeartFill } from "react-icons/bs";
 import toast, { Toaster } from "react-hot-toast";
 import css from "./SearchBar.module.css";
 
-const SearchBar = ({ onSearch }) => {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const form = event.target;
-    const searchValue = form.elements.searchInput.value;
+interface Props {
+  onSearch: (searchValue: string) => void;
+}
 
-    if (searchValue.trim() === "") {
+const SearchBar: React.FC<Props> = ({ onSearch }) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const searchInput = form.elements.namedItem("searchInput") as HTMLInputElement;
+    const searchValue = searchInput.value.trim();
+
+    if (searchValue === "") {
       toast.error("Please enter the search term!", {
         position: "top-right",
       });
