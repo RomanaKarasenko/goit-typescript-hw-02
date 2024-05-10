@@ -1,0 +1,12 @@
+.imageCards img {
+  width: 400px;
+  height: 400px;
+  border: 5px solid #5ad4f3;
+  border-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+.imageCards img:hover {
+  transform: scale(1.1);
+  border: 10px solid #1176f2;
+}
