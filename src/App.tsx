@@ -55,7 +55,7 @@ function App() {
           setError(true);
         } else {
           setImages((prevImages) => prevImages.concat(data.results));
-          setLoadMoreBtn(data.total_pages && data.total_pages !== page);
+          setLoadMoreBtn(!!(data.total_pages && data.total_pages !== page));
           if (page === 1) {
             toast.success(`${data.total} photos were found for your request`, {
               position: "top-left",

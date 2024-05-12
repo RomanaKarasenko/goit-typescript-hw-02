@@ -5,10 +5,6 @@ const ACCESS_KEY = "EfKVEm97Jq9NZQRYMD3GMdSbslYsOLCuN2UqThuSAbE";
 
 axios.defaults.baseURL = API_URL;
 
-interface ImageData {
-  id: string;
-}
-
 interface SearchParams {
   client_id: string;
   page: number;
@@ -25,12 +21,18 @@ const searchParams: SearchParams = {
   orientation: "landscape",
 };
 
+interface UnsplashResponse {
+  total: number;
+  total_pages: number;
+  results: []; 
+}
+
 export const fetchImages = async (
   query: string,
   page: number
-): Promise<ImageData[]> => {
+): Promise<UnsplashResponse> => {
   try {
-    const res: AxiosResponse<{ results: ImageData[] }> = await axios.get(
+    const res: AxiosResponse<UnsplashResponse> = await axios.get(
       "/search/photos",
       {
         params: {
@@ -40,8 +42,8 @@ export const fetchImages = async (
         },
       }
     );
-    return res.data.results;
+    return res.data;
   } catch (error) {
-    throw new Error("Failed to fetch images");
+    throw new Error("Failed to fetch images from Unsplash");
   }
 };
