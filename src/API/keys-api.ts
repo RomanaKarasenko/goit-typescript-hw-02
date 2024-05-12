@@ -5,6 +5,10 @@ const ACCESS_KEY = "EfKVEm97Jq9NZQRYMD3GMdSbslYsOLCuN2UqThuSAbE";
 
 axios.defaults.baseURL = API_URL;
 
+interface ImageData {
+  id: string;
+}
+
 interface SearchParams {
   client_id: string;
   page: number;
@@ -24,15 +28,20 @@ const searchParams: SearchParams = {
 export const fetchImages = async (
   query: string,
   page: number
-): Promise<any> => {
+): Promise<ImageData[]> => {
   try {
-    const res: AxiosResponse<any> = await axios.get("/search/photos", {
-      params: {
-        ...searchParams,
-        page,
-        query,
-      },
-    });
-    return res.data;
-  } catch (error) {}
+    const res: AxiosResponse<{ results: ImageData[] }> = await axios.get(
+      "/search/photos",
+      {
+        params: {
+          ...searchParams,
+          page,
+          query,
+        },
+      }
+    );
+    return res.data.results;
+  } catch (error) {
+    throw new Error("Failed to fetch images");
+  }
 };
